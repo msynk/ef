@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D6A01C01-1DA4-498D-AEE6-9D270524D6F8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ReverseEngineerCodeFirst.Business</RootNamespace>
+    <AssemblyName>ReverseEngineerCodeFirst.Business</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\Libs\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\Libs\StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Blo\AuthorBlo.cs" />
+    <Compile Include="Blo\AuthorBlo.generated.cs">
+      <DependentUpon>AuthorBlo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Blo\Base\BaseBlo.cs" />
+    <Compile Include="Blo\BookBlo.cs" />
+    <Compile Include="Blo\BookBlo.generated.cs">
+      <DependentUpon>BookBlo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Blo\BookCoverBlo.cs" />
+    <Compile Include="Blo\BookCoverBlo.generated.cs">
+      <DependentUpon>BookCoverBlo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dto\AuthorDto.cs" />
+    <Compile Include="Dto\AuthorDto.generated.cs">
+      <DependentUpon>AuthorDto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dto\Base\BaseDto.cs" />
+    <Compile Include="Dto\BookCoverDto.cs" />
+    <Compile Include="Dto\BookCoverDto.generated.cs">
+      <DependentUpon>BookCoverDto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dto\BookDto.cs" />
+    <Compile Include="Dto\BookDto.generated.cs">
+      <DependentUpon>BookDto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dto\Mapping\AuthorDtoMapper.cs" />
+    <Compile Include="Dto\Mapping\BookCoverDtoMapper.cs" />
+    <Compile Include="Dto\Mapping\BookDtoMapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StructureMap\InstanceFactory.cs" />
+    <Compile Include="StructureMap\StractureMapInitializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ReverseEngineerCodeFirst.Data\ReverseEngineerCodeFirst.Data.csproj">
+      <Project>{9ebcb4f8-efcb-4a65-96a6-66b28bd17478}</Project>
+      <Name>ReverseEngineerCodeFirst.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReverseEngineerCodeFirst.Model\ReverseEngineerCodeFirst.Model.csproj">
+      <Project>{65f45c51-0e2a-4429-934e-f721503283d6}</Project>
+      <Name>ReverseEngineerCodeFirst.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

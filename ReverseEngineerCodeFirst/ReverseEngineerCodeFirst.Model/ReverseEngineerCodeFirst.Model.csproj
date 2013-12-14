@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{65F45C51-0E2A-4429-934E-F721503283D6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ReverseEngineerCodeFirst.Model</RootNamespace>
+    <AssemblyName>ReverseEngineerCodeFirst.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\Libs\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\Libs\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Author.cs" />
+    <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\BookCover.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="CodeTemplates\bkp\bll\BaseBLO.tt" />
+    <None Include="CodeTemplates\bkp\bll\BaseDTO.tt" />
+    <None Include="CodeTemplates\bkp\bll\EntityBLO.generated.tt" />
+    <None Include="CodeTemplates\bkp\bll\EntityBLO.tt" />
+    <None Include="CodeTemplates\bkp\bll\EntityDTO.generated.tt" />
+    <None Include="CodeTemplates\bkp\bll\EntityDTO.tt" />
+    <None Include="CodeTemplates\bkp\bll\EntityDTOMapper.tt" />
+    <None Include="CodeTemplates\bkp\bll\InstanceFactory.tt" />
+    <None Include="CodeTemplates\bkp\bll\StractureMapInitializer.tt" />
+    <None Include="CodeTemplates\bkp\C.tt" />
+    <None Include="CodeTemplates\bkp\Context.tt" />
+    <None Include="CodeTemplates\bkp\dal\Context.generated.tt" />
+    <None Include="CodeTemplates\bkp\dal\Context.tt" />
+    <None Include="CodeTemplates\bkp\dal\DbServiceBase.tt" />
+    <None Include="CodeTemplates\bkp\dal\EntityService.generated.tt" />
+    <None Include="CodeTemplates\bkp\dal\EntityService.tt" />
+    <None Include="CodeTemplates\bkp\dal\IDbService.tt" />
+    <None Include="CodeTemplates\bkp\dal\IEntityService.tt" />
+    <None Include="CodeTemplates\bkp\dal\IRepositoryService.tt" />
+    <None Include="CodeTemplates\bkp\dal\IUnitOfWork.tt" />
+    <None Include="CodeTemplates\bkp\dal\Mapping.tt" />
+    <None Include="CodeTemplates\bkp\E.tt" />
+    <None Include="CodeTemplates\bkp\EF.Utility.CS.ttinclude" />
+    <None Include="CodeTemplates\bkp\Entity.tt" />
+    <None Include="CodeTemplates\bkp\M.tt" />
+    <None Include="CodeTemplates\bkp\Mapping.tt" />
+    <None Include="CodeTemplates\bkp\ProcessTemplate.ttinclude" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\BaseBLO.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\BaseDTO.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\EntityBLO.generated.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\EntityBLO.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\EntityDTO.generated.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\EntityDTO.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\EntityDTOMapper.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\InstanceFactory.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\StractureMapInitializer.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\Context.generated.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\Context.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\DbServiceBase.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\EntityService.generated.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\EntityService.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\IDbService.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\IEntityService.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\IRepositoryService.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\IUnitOfWork.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\Mapping.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\EF.Utility.CS.ttinclude" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\ProcessTemplate.ttinclude" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

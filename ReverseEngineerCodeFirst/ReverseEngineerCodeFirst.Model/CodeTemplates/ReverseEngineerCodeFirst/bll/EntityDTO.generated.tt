@@ -1,0 +1,67 @@
+<#@ template hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="Microsoft.CSharp"#>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data.Entity" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data.Metadata.Edm" #>
+<#@ import namespace="Microsoft.CSharp.RuntimeBinder"#>
+<#@ parameter name="dtoNS" type="System.String" #>
+<#@ parameter name="modelsNS" type="System.String" #>
+<#@ parameter name="dto" type="System.String" #>
+<#@ parameter name="efHost" type="Microsoft.DbContextPackage.Utilities.EfTextTemplateHost" #>
+<#@ parameter name="codeObject" type="System.Object" #>
+<#@ parameter name="accessibilityForProperty" type="System.Object" #><#
+  var AccessibilityForProperty = (Func<EdmMember, string>)accessibilityForProperty;
+  dynamic code = codeObject;
+  var entityName = efHost.EntityType.Name;
+  var entityLowerName = entityName.ToLower();
+  
+  var entityDto = entityName + dto;
+  //var properties = new System.Collections.Generic.List<string>();
+#>
+using System.Linq;
+using System.Collections.Generic;
+
+namespace <#= dtoNS #>
+{
+	public partial class <#= entityDto #>
+  {
+<#
+  foreach (var property in efHost.EntityType.Properties)
+  {
+    var typeUsage = code.Escape(property.TypeUsage);
+
+    // Fix-up spatial types for EF6
+    if (efHost.EntityFrameworkVersion >= new Version(6, 0) && typeUsage.StartsWith("System.Data.Spatial."))
+    {
+        typeUsage = typeUsage.Replace("System.Data.Spatial.", "System.Data.Entity.Spatial.");
+    }
+    var propertyName = code.Escape(property);
+#>
+    <#= AccessibilityForProperty(property) #> <#= typeUsage #> <#= propertyName #> { get; set; }
+<#
+  //properties.Add(propertyName);
+  }
+
+  foreach (var navProperty in efHost.EntityType.NavigationProperties.Where(np => np.DeclaringType == efHost.EntityType))
+  {
+    var propertyName = code.Escape(navProperty);
+    if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+    {
+#>
+    public virtual ICollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) + dto #>> <#= propertyName #> { get; set; }
+<#
+    }
+    else
+    {
+#>
+    public virtual <#= code.Escape(navProperty.ToEndMember.GetEntityType()) + dto #> <#= propertyName #> { get; set; }
+<#
+    }
+    //properties.Add(propertyName);
+  }
+#>
+  }
+}

@@ -1,0 +1,106 @@
+<#@ template hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="Microsoft.CSharp"#>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data.Entity" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data.Metadata.Edm" #>
+<#@ import namespace="Microsoft.CSharp.RuntimeBinder"#>
+<#@ parameter name="dtoNS" type="System.String" #>
+<#@ parameter name="modelsNS" type="System.String" #>
+<#@ parameter name="dto" type="System.String" #>
+<#@ parameter name="efHost" type="Microsoft.DbContextPackage.Utilities.EfTextTemplateHost" #>
+<#@ parameter name="codeObject" type="System.Object" #>
+<#@ parameter name="accessibilityForProperty" type="System.Object" #><#
+  var AccessibilityForProperty = (Func<EdmMember, string>)accessibilityForProperty;
+  dynamic code = codeObject;
+  var entityName = efHost.EntityType.Name;
+  var entityLowerName = entityName.ToLower();
+  
+  var entityDto = entityName + dto;
+  var properties = efHost.EntityType.Properties.ToList();
+
+  var navProperties = efHost.EntityType.NavigationProperties.Where(np => np.DeclaringType == efHost.EntityType).ToList();
+  var navSingleProperties = navProperties.Where(np => np.ToEndMember.RelationshipMultiplicity != RelationshipMultiplicity.Many).ToList();
+  var navPluralProperties = navProperties.Where(np => np.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many).ToList();
+#>
+using System.Linq;
+using System.Collections.Generic;
+using <#= modelsNS #>.Models;
+
+namespace <#= dtoNS #>.Mapping
+{
+  public static class <#= entityDto #>Mapper
+  {
+    public static <#= entityDto #> From(<#= entityName #> entity)
+    {
+      return new <#= entityDto #>
+      {
+<#
+  foreach(var property in properties)
+  {
+    var propertyName = code.Escape(property);
+#>
+        <#= propertyName #> = entity.<#= propertyName #>,
+<#
+  }
+  foreach(var property in navSingleProperties)
+  {
+    var propertyName = code.Escape(property);
+#>
+        <#= propertyName #> = entity.<#= propertyName #> != null ? <#= code.Escape(property.ToEndMember.GetEntityType()) + dto #>Mapper.From(entity.<#= propertyName #>) : null,
+<#
+  }
+  foreach(var property in navPluralProperties)
+  {
+    var propertyName = code.Escape(property);
+#>
+        <#= propertyName #> = entity.<#= propertyName #> != null ? entity.<#= propertyName #>.Select(<#= code.Escape(property.ToEndMember.GetEntityType()) + dto #>Mapper.From).ToList() : null,
+<#
+  }
+#>
+      };
+    }
+
+    public static IList<<#= entityDto #>> From(IList<<#= entityName #>> entities)
+    {
+      return entities.Select(From).ToList();
+    }
+
+    public static <#= entityName #> To(<#= entityDto #> dto)
+    {
+      return new <#= entityName #>
+      {
+<#
+  foreach(var property in properties)
+  {
+    var propertyName = code.Escape(property);
+#>
+        <#= propertyName #> = dto.<#= propertyName #>,
+<#
+  }
+  foreach(var property in navSingleProperties)
+  {
+    var propertyName = code.Escape(property);
+#>
+        <#= propertyName #> = dto.<#= propertyName #> != null ? <#= code.Escape(property.ToEndMember.GetEntityType()) + dto #>Mapper.To(dto.<#= propertyName #>) : null,
+<#
+  }
+  foreach(var property in navPluralProperties)
+  {
+    var propertyName = code.Escape(property);
+#>
+        <#= propertyName #> = dto.<#= propertyName #> != null ? dto.<#= propertyName #>.Select(<#= code.Escape(property.ToEndMember.GetEntityType()) + dto #>Mapper.To).ToList() : null,
+<#
+  }
+#>
+      };
+    }
+
+    public static IList<<#= entityName #>> To(IList<<#= entityDto #>> dtos)
+    {
+      return dtos.Select(To).ToList();
+    }
+  }
+}
