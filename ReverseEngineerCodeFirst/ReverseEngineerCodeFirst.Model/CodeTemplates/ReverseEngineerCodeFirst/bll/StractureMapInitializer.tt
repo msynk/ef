@@ -23,7 +23,7 @@ namespace <#= bllNS #>.StructureMap
                                  {
                                    x.For<IUnitOfWork>().HybridHttpOrThreadLocalScoped().Use(() => new <#= efHost.EntityContainer.Name #>());
                                    
-                                   x.For<IUserService>().Use<UserService>();
+                                   //x.For<IUserService>().Use<UserService>();
                                  });
     }
     //public static void Init(ControllerBuilder builder = null)

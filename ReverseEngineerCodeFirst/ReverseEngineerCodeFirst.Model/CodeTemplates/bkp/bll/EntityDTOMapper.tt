@@ -11,13 +11,11 @@
 <#@ parameter name="modelsNS" type="System.String" #>
 <#@ parameter name="dto" type="System.String" #>
 <#@ parameter name="efHost" type="Microsoft.DbContextPackage.Utilities.EfTextTemplateHost" #>
-<#@ parameter name="codeObject" type="System.Object" #>
-<#@ parameter name="accessibilityForProperty" type="System.Object" #><#
-  var AccessibilityForProperty = (Func<EdmMember, string>)accessibilityForProperty;
+<#@ parameter name="codeObject" type="System.Object" #><#
   dynamic code = codeObject;
   var entityName = efHost.EntityType.Name;
   var entityLowerName = entityName.ToLower();
-  
+
   var entityDto = entityName + dto;
   var properties = efHost.EntityType.Properties.ToList();
 

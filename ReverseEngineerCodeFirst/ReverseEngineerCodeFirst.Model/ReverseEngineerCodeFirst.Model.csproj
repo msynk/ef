@@ -74,6 +74,7 @@
     <None Include="CodeTemplates\bkp\Entity.tt" />
     <None Include="CodeTemplates\bkp\M.tt" />
     <None Include="CodeTemplates\bkp\Mapping.tt" />
+    <None Include="CodeTemplates\bkp\models\Model.tt" />
     <None Include="CodeTemplates\bkp\ProcessTemplate.ttinclude" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\BaseBLO.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\BaseDTO.tt" />
@@ -98,7 +99,11 @@
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\EF.Utility.CS.ttinclude" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\models\Model.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\ProcessTemplate.ttinclude" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
