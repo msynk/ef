@@ -1,17 +1,13 @@
-<#@ template hostspecific="true" language="C#" #>
-<#@ output extension=".cs" #>
-<#@ parameter name="dalNS" type="System.String" #>
-<#@ parameter name="efHost" type="Microsoft.DbContextPackage.Utilities.EfTextTemplateHost" #>
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using <#= dalNS #>.Services.Interfaces.Base;
+using ReverseEngineerCodeFirst.Data.Services.Interfaces.Base;
 
-namespace <#= dalNS #>.Contexts
+namespace ReverseEngineerCodeFirst.Data.Contexts
 {
-  public partial class <#= efHost.EntityContainer.Name #> : IUnitOfWork
+  public partial class TestContext : IUnitOfWork
   {
     #region IUnitOfWork Members
 

@@ -16,7 +16,7 @@ namespace ReverseEngineerCodeFirst.Business.StructureMap
     {
       ObjectFactory.Initialize(x =>
                                  {
-                                   x.For<IUnitOfWork>().HybridHttpOrThreadLocalScoped().Use(() => new TestEntitiesContext());
+                                   x.For<IUnitOfWork>().HybridHttpOrThreadLocalScoped().Use(() => new TestContext());
                                    
                                    //x.For<IUserService>().Use<UserService>();
                                  });

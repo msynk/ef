@@ -9,54 +9,105 @@
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating.VSHost" #><#
   var efHost = (EfTextTemplateHost)Host;
   var code = new CodeGenerationTools(this);
-  var generator = new CodeGenerator(efHost, code);
+
+  var settings = new GeneratorSettings
+    {
+      // VS 2010: VisualStudio.DTE.10.0
+      // VS 2012: VisualStudio.DTE.11.0
+      // VS 2013: VisualStudio.DTE.12.0
+      VisualStudioVersion = "VisualStudio.DTE.12.0",
+
+      MainNamespace = "ReverseEngineerCodeFirst",
+      BusinessLogicProject = "Business",
+      DataAccessProject = "Data",
+      ModelsProject = "Model",
+      DataTransferObjectSuffix = "Dto",
+      BusinessLogicObjectSuffix = "Blo"
+    };
+
+  var generator = new CodeGenerator(efHost, code, settings);
   generator.Generate();
+#>
+<#+
+  public class GeneratorSettings
+  {
+    public string VisualStudioVersion;
+    public string MainNamespace;
+    public string BusinessLogicProject;
+    public string DataAccessProject;
+    public string ModelsProject;
+    public string DataTransferObjectSuffix;
+    public string BusinessLogicObjectSuffix;
+  }
 #>
 <#+
   public class CodeGenerator
   {
-    private const string VisualStudioVersion = "VisualStudio.DTE.12.0";
-    private const string MainNs = "ReverseEngineerCodeFirst";
-    private const string Bll = "Business";
-    private const string Dal = "Data";
-    private const string Models = "Model";
-    private const string Dto = "Dto";
-    private const string Blo = "Blo";
-    ////////////////////////////////////////////////////////////////////////////////////////
-    private const string BllNs = MainNs + "." + Bll;
-    private const string DalNs = MainNs + "." + Dal;
-    private const string ModelsNs = MainNs + "." + Models;
-    private const string DtoNs = BllNs + "." + Dto;
-    private const string BloNs = BllNs + "." + Blo;
-    ////////////////////////////////////////////////////////////////////////////////////////
-    private readonly Solution _solution;
-    private readonly CodePaths _paths;
-    private CustomHost _customHost;
     private EfTextTemplateHost _efHost;
     private CodeGenerationTools _codeGenerationTools;
+    private GeneratorSettings _settings;
+
+    private string _visualStudioVersion;
+    private string _mainNs;
+    private string _bll;
+    private string _dal;
+    private string _models;
+    private string _dto;
+    private string _blo;
+
+    private string _bllNs;
+    private string _dalNs;
+    private string _modelsNs;
+    private string _dtoNs;
+    private string _bloNs;
+    
+    private Solution _solution;
+    private CodePaths _paths;
+    private CustomHost _customHost;
+
     private string _entityName;
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    public CodeGenerator(EfTextTemplateHost efHost, CodeGenerationTools tools)
+    public CodeGenerator(EfTextTemplateHost efHost, CodeGenerationTools tools, GeneratorSettings settings)
     {
       _efHost = efHost;
       _codeGenerationTools = tools;
-      _solution = ((DTE)System.Runtime.InteropServices.Marshal.GetActiveObject(VisualStudioVersion)).Solution;
-      _customHost = new CustomHost();
-      _paths = new CodePaths();
+      _settings = settings;
+      
+      Initialize();
+    }
+
+    private void Initialize()
+    {
+      _visualStudioVersion = _settings.VisualStudioVersion;
+      _mainNs = _settings.MainNamespace;
+      _bll = _settings.BusinessLogicProject;
+      _dal = _settings.DataAccessProject;
+      _models = _settings.ModelsProject;
+      _dto = _settings.DataTransferObjectSuffix;
+      _blo = _settings.BusinessLogicObjectSuffix;
+
+      _bllNs = _mainNs + "." + _bll;
+      _dalNs = _mainNs + "." + _dal;
+      _modelsNs = _mainNs + "." + _models;
+      _dtoNs = _bllNs + "." + _dto;
+      _bloNs = _bllNs + "." + _blo;
+
       CreateSessionHost();
     }
+
     private void CreateSessionHost()
     {
+      _customHost = new CustomHost();
       var sessionHost = (ITextTemplatingSessionHost)_customHost;
       var session = new TextTemplatingSession();
-      session["bllNS"] = BllNs;
-      session["dalNS"] = DalNs;
-      session["modelsNS"] = ModelsNs;
-      session["dtoNS"] = DtoNs;
-      session["bloNS"] = BloNs;
-      session["dto"] = Dto;
-      session["blo"] = Blo;
+      session["bllNS"] = _bllNs;
+      session["dalNS"] = _dalNs;
+      session["modelsNS"] = _modelsNs;
+      session["dtoNS"] = _dtoNs;
+      session["bloNS"] = _bloNs;
+      session["dto"] = _dto;
+      session["blo"] = _blo;
       session["efHost"] = _efHost;
       session["codeObject"] = _codeGenerationTools;
       session["accessibilityForProperty"] = (Func<EdmMember, string>)Accessibility.ForProperty;
@@ -66,25 +117,27 @@
     public void Generate()
     {
       _entityName = _efHost.EntityType.Name;
-      InitializePaths();
+      GeneratePaths();
       GenerateFiles();
       AddFilesToProjects();
     }
 
-    private void InitializePaths()
+    private void GeneratePaths()
     {
+      _paths = new CodePaths();
+      _solution = ((DTE)System.Runtime.InteropServices.Marshal.GetActiveObject(_visualStudioVersion)).Solution;
       var solutionPath = Path.GetDirectoryName(_solution.FileName);
 
-      var ttPath = Path.Combine(solutionPath, ModelsNs, @"CodeTemplates\ReverseEngineerCodeFirst");
+      var ttPath = Path.Combine(solutionPath, _modelsNs, @"CodeTemplates\ReverseEngineerCodeFirst");
       _paths.ttBllPath = Path.Combine(ttPath, "bll");
       _paths.ttDalPath = Path.Combine(ttPath, "dal");
       _paths.ttModelsPath = Path.Combine(ttPath, "models");
 
-      var bllPath = Path.Combine(solutionPath, BllNs);
-      var bloPath = Path.Combine(bllPath, Blo);
+      var bllPath = Path.Combine(solutionPath, _bllNs);
+      var bloPath = Path.Combine(bllPath, _blo);
       var baseBloPath = Path.Combine(bloPath, "Base");
       if (!Directory.Exists(baseBloPath)) Directory.CreateDirectory(baseBloPath);
-      var dtoPath = Path.Combine(bllPath, Dto);
+      var dtoPath = Path.Combine(bllPath, _dto);
       var baseDtoPath = Path.Combine(dtoPath, "Base");
       if (!Directory.Exists(baseDtoPath)) Directory.CreateDirectory(baseDtoPath);
       var dtoMappingPath = Path.Combine(dtoPath, "Mapping");
@@ -92,18 +145,18 @@
       var structureMapPath = Path.Combine(bllPath, "StructureMap");
       if (!Directory.Exists(structureMapPath)) Directory.CreateDirectory(structureMapPath);
 
-      _paths.BaseBloPath = Path.Combine(baseBloPath, "Base" + Blo + ".cs");
-      _paths.EntityBloPath = Path.Combine(bloPath, _entityName + Blo + ".cs");
-      _paths.EntityBloGeneratedPath = Path.Combine(bloPath, _entityName + Blo + ".generated.cs");
-      _paths.BaseDtoPath = Path.Combine(baseDtoPath, "Base" + Dto + ".cs");
-      _paths.EntityDtoPath = Path.Combine(dtoPath, _entityName + Dto + ".cs");
-      _paths.EntityDtoGeneratedPath = Path.Combine(dtoPath, _entityName + Dto + ".generated.cs");
-      _paths.EntityDtoMapperPath = Path.Combine(dtoMappingPath, _entityName + Dto + "Mapper.cs");
+      _paths.BaseBloPath = Path.Combine(baseBloPath, "Base" + _blo + ".cs");
+      _paths.EntityBloPath = Path.Combine(bloPath, _entityName + _blo + ".cs");
+      _paths.EntityBloGeneratedPath = Path.Combine(bloPath, _entityName + _blo + ".generated.cs");
+      _paths.BaseDtoPath = Path.Combine(baseDtoPath, "Base" + _dto + ".cs");
+      _paths.EntityDtoPath = Path.Combine(dtoPath, _entityName + _dto + ".cs");
+      _paths.EntityDtoGeneratedPath = Path.Combine(dtoPath, _entityName + _dto + ".generated.cs");
+      _paths.EntityDtoMapperPath = Path.Combine(dtoMappingPath, _entityName + _dto + "Mapper.cs");
       _paths.InstanceFactoryPath = Path.Combine(structureMapPath, "InstanceFactory.cs");
       _paths.StractureMapInitializerPath = Path.Combine(structureMapPath, "StractureMapInitializer.cs");
 
 
-      var dalPath = Path.Combine(solutionPath, DalNs);
+      var dalPath = Path.Combine(solutionPath, _dalNs);
       var servicePath = Path.Combine(dalPath, @"Services\Implementations\EF");
       var baseServicePath = Path.Combine(servicePath, "Base");
       if (!Directory.Exists(baseServicePath)) Directory.CreateDirectory(baseServicePath);
@@ -127,7 +180,7 @@
       _paths.IUnitOfWorkPath = Path.Combine(baseInterfacesPath, "IUnitOfWork.cs");
       _paths.MappingPath = Path.Combine(mappingsPath, _entityName + "Map.cs");
 
-      var modelsProjectPath = Path.Combine(solutionPath, ModelsNs);
+      var modelsProjectPath = Path.Combine(solutionPath, _modelsNs);
       var modelsPath = Path.Combine(modelsProjectPath, "Models");
       if (!Directory.Exists(modelsPath)) Directory.CreateDirectory(modelsPath);
       _paths.ModelPath = Path.Combine(modelsPath, _entityName + ".cs");
@@ -176,7 +229,7 @@
 
     private void AddFilesToProjects()
     {
-      var bllProject = _solution.Projects.Cast<Project>().Single(proj => proj.Name == BllNs);
+      var bllProject = _solution.Projects.Cast<Project>().Single(proj => proj.Name == _bllNs);
       var baseBloItem = bllProject.ProjectItems.AddFromFile(_paths.BaseBloPath);
       var bloItem = bllProject.ProjectItems.AddFromFile(_paths.EntityBloPath);
       bloItem.ProjectItems.AddFromFile(_paths.EntityBloGeneratedPath);
@@ -187,7 +240,7 @@
       var instanceFactoryItem = bllProject.ProjectItems.AddFromFile(_paths.InstanceFactoryPath);
       var stractureMapInitializerItem = bllProject.ProjectItems.AddFromFile(_paths.StractureMapInitializerPath);
 
-      var dalProject = _solution.Projects.Cast<Project>().Single(proj => proj.Name == DalNs);
+      var dalProject = _solution.Projects.Cast<Project>().Single(proj => proj.Name == _dalNs);
       var contextItem = dalProject.ProjectItems.AddFromFile(_paths.ContextPath);
       contextItem.ProjectItems.AddFromFile(_paths.ContextGeneratedPath);
       var dbServiceBaseItem = dalProject.ProjectItems.AddFromFile(_paths.DbServiceBasePath);
@@ -199,7 +252,7 @@
       var iUnitOfWorkItem = dalProject.ProjectItems.AddFromFile(_paths.IUnitOfWorkPath);
       var mappingItem = dalProject.ProjectItems.AddFromFile(_paths.MappingPath);
 
-      var modelsProject = _solution.Projects.Cast<Project>().Single(proj => proj.Name == ModelsNs);
+      var modelsProject = _solution.Projects.Cast<Project>().Single(proj => proj.Name == _modelsNs);
       var modelItem = modelsProject.ProjectItems.AddFromFile(_paths.ModelPath);
     }
   }

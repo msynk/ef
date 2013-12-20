@@ -41,35 +41,17 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Blo\AuthorBlo.cs" />
-    <Compile Include="Blo\AuthorBlo.generated.cs">
-      <DependentUpon>AuthorBlo.cs</DependentUpon>
-    </Compile>
     <Compile Include="Blo\Base\BaseBlo.cs" />
-    <Compile Include="Blo\BookBlo.cs" />
-    <Compile Include="Blo\BookBlo.generated.cs">
-      <DependentUpon>BookBlo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Blo\BookCoverBlo.cs" />
-    <Compile Include="Blo\BookCoverBlo.generated.cs">
-      <DependentUpon>BookCoverBlo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dto\AuthorDto.cs" />
-    <Compile Include="Dto\AuthorDto.generated.cs">
-      <DependentUpon>AuthorDto.cs</DependentUpon>
+    <Compile Include="Blo\UserBlo.cs" />
+    <Compile Include="Blo\UserBlo.generated.cs">
+      <DependentUpon>UserBlo.cs</DependentUpon>
     </Compile>
     <Compile Include="Dto\Base\BaseDto.cs" />
-    <Compile Include="Dto\BookCoverDto.cs" />
-    <Compile Include="Dto\BookCoverDto.generated.cs">
-      <DependentUpon>BookCoverDto.cs</DependentUpon>
+    <Compile Include="Dto\Mapping\UserDtoMapper.cs" />
+    <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="Dto\UserDto.generated.cs">
+      <DependentUpon>UserDto.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dto\BookDto.cs" />
-    <Compile Include="Dto\BookDto.generated.cs">
-      <DependentUpon>BookDto.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Dto\Mapping\AuthorDtoMapper.cs" />
-    <Compile Include="Dto\Mapping\BookCoverDtoMapper.cs" />
-    <Compile Include="Dto\Mapping\BookDtoMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StructureMap\InstanceFactory.cs" />
     <Compile Include="StructureMap\StractureMapInitializer.cs" />
