@@ -8,7 +8,7 @@
   var entityName = efHost.EntityType.Name;
 #>
 using <#= dalNS #>.Services.Interfaces.Base;
-using <#= modelsNS #>.Models;
+using <#= modelsNS #>;
 
 namespace <#= dalNS #>.Services.Interfaces
 {

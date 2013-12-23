@@ -3,6 +3,7 @@
 <#@ assembly name="Microsoft.CSharp"#>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Microsoft.CSharp.RuntimeBinder"#>
+<#@ parameter name="modelsNS" type="System.String" #>
 <#@ parameter name="efHost" type="Microsoft.DbContextPackage.Utilities.EfTextTemplateHost" #>
 <#@ parameter name="codeObject" type="System.Object" #><#
   dynamic code = codeObject;
@@ -10,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace <#= code.EscapeNamespace(efHost.Namespace) #>
+namespace <#= modelsNS #>
 {
   public partial class <#= efHost.EntityType.Name #>
   {

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
-using ReverseEngineerCodeFirst.Model.Models;
+using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Data.Mappings
 {
@@ -17,7 +17,7 @@ namespace ReverseEngineerCodeFirst.Data.Mappings
 
       Property(t => t.Name)
         .IsRequired()
-                .HasMaxLength(50);
+        .HasMaxLength(50);
 
       Property(t => t.Value)
         .HasMaxLength(50);

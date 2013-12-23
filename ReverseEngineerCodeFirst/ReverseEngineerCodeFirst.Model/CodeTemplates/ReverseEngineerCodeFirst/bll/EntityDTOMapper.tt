@@ -25,7 +25,7 @@
 #>
 using System.Linq;
 using System.Collections.Generic;
-using <#= modelsNS #>.Models;
+using <#= modelsNS #>;
 
 namespace <#= dtoNS #>.Mapping
 {

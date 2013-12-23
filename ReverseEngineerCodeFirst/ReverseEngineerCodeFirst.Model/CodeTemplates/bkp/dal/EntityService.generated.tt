@@ -12,7 +12,7 @@ using System.Data.Entity;
 using <#= dalNS #>.Services.Implementations.EF.Base;
 using <#= dalNS #>.Services.Interfaces;
 using <#= dalNS #>.Services.Interfaces.Base;
-using <#= modelsNS #>.Models;
+using <#= modelsNS #>;
 
 namespace <#= dalNS #>.Services.Implementations.EF
 {

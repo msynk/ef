@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ReverseEngineerCodeFirst.Model.Models
+namespace ReverseEngineerCodeFirst.Model
 {
   public partial class User
   {

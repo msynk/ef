@@ -1,7 +1,7 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using ReverseEngineerCodeFirst.Data.Mappings;
-using ReverseEngineerCodeFirst.Model.Models;
+using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Data.Contexts
 {

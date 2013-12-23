@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
-using ReverseEngineerCodeFirst.Model.Models;
+using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Data.Mappings
 {

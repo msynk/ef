@@ -23,7 +23,7 @@ using <#= dtoNS #>;
 using <#= dtoNS #>.Mapping;
 using <#= dalNS #>.Services.Interfaces;
 using <#= dalNS #>.Services.Interfaces.Base;
-using <#= modelsNS #>.Models;
+using <#= modelsNS #>;
 
 namespace <#= bloNS #>
 {

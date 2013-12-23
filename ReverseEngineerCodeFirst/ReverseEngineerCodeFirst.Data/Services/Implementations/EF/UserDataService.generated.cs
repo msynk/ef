@@ -3,7 +3,7 @@ using System.Data.Entity;
 using ReverseEngineerCodeFirst.Data.Services.Implementations.EF.Base;
 using ReverseEngineerCodeFirst.Data.Services.Interfaces;
 using ReverseEngineerCodeFirst.Data.Services.Interfaces.Base;
-using ReverseEngineerCodeFirst.Model.Models;
+using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Data.Services.Implementations.EF
 {

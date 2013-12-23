@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Collections.Generic;
-using ReverseEngineerCodeFirst.Model.Models;
+using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Business.Dto.Mapping
 {

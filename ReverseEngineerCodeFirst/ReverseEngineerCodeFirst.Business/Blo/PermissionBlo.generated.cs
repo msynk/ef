@@ -5,7 +5,7 @@ using ReverseEngineerCodeFirst.Business.Dto;
 using ReverseEngineerCodeFirst.Business.Dto.Mapping;
 using ReverseEngineerCodeFirst.Data.Services.Interfaces;
 using ReverseEngineerCodeFirst.Data.Services.Interfaces.Base;
-using ReverseEngineerCodeFirst.Model.Models;
+using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Business.Blo
 {

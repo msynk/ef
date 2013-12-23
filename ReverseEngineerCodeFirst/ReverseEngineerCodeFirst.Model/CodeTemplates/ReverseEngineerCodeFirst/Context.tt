@@ -1,0 +1,438 @@
+<#@ template hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ include file="EF.Utility.CS.ttinclude" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating.VSHost" #><#
+  var efHost = (EfTextTemplateHost)Host;
+  var tools = new CodeGenerationTools(this);
+
+  var settings = new GeneratorSettings
+    {
+      EfHost = efHost,
+      Tools = tools,
+
+      // VS 2010: VisualStudio.DTE.10.0
+      // VS 2012: VisualStudio.DTE.11.0
+      // VS 2013: VisualStudio.DTE.12.0
+      VisualStudioVersion = "VisualStudio.DTE.12.0",
+
+      MainNamespace = "ReverseEngineerCodeFirst",
+      BusinessLogicProject = "Business",
+      DataAccessProject = "Data",
+      ModelsProject = "Model",
+      DataTransferObjectSuffix = "Dto",
+      BusinessLogicObjectSuffix = "Blo",
+
+      Complete = false
+    };
+
+  var generator = new CodeGenerator(settings);
+  generator.Generate();
+#>
+<#+
+  public class CodeGenerator
+  {
+    private GeneratorSettings _settings;
+    private CustomHost _customHost;
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    public CodeGenerator(GeneratorSettings settings)
+    {
+      _settings = settings;
+    }
+
+    public void Generate()
+    {
+      _settings.Solution = ((DTE)System.Runtime.InteropServices.Marshal.GetActiveObject(_settings.VisualStudioVersion)).Solution;
+
+      CreateSessionHost();
+      GenerateFiles();
+    }
+
+    private void CreateSessionHost()
+    {
+      _customHost = new CustomHost();
+      var sessionHost = (ITextTemplatingSessionHost)_customHost;
+      var session = new TextTemplatingSession();
+      session["bllNS"] = _settings.BusinessLogicNamespace;
+      session["dalNS"] = _settings.DataAccessNamespace;
+      session["modelsNS"] = _settings.ModelsNamespace;
+      session["bloNS"] = _settings.BusinessLogicObjectsNamespace;
+      session["dtoNS"] = _settings.DataTransferObjectsNamespace;
+      session["blo"] = _settings.BusinessLogicObjectSuffix;
+      session["dto"] = _settings.DataTransferObjectSuffix;
+      session["efHost"] = _settings.EfHost;
+      session["codeObject"] = _settings.Tools;
+      session["accessibilityForProperty"] = (Func<EdmMember, string>)Accessibility.ForProperty;
+      sessionHost.Session = session;
+    }
+
+    private void GenerateFiles()
+    {
+      foreach(FileEntity fileEntity in new GeneratorFiles(_settings))
+      {
+        if(_settings.Complete || (!_settings.Complete && fileEntity.InNonCompleteGeneration))
+        {
+          GenerateFile(fileEntity.T4FilePath, fileEntity.CodeFilePath);
+        }
+        var project = _settings.Solution.Projects.Cast<Project>().Single(proj => proj.Name == fileEntity.ProjectName);
+        var projectItem = project.ProjectItems.AddFromFile(fileEntity.CodeFilePath);
+        if (fileEntity.HasGenerated)
+        {
+          GenerateFile(fileEntity.T4GeneratedFilePath, fileEntity.CodeGeneratedFilePath);
+          projectItem.ProjectItems.AddFromFile(fileEntity.CodeGeneratedFilePath);
+        }
+      }
+    }
+    private void GenerateFile(string templateFileName, string outputFileName)
+    {
+      var output = new Engine().ProcessTemplate(File.ReadAllText(_customHost.ResolvePath(templateFileName)), _customHost);
+      Directory.CreateDirectory(Path.GetDirectoryName(outputFileName));
+      File.WriteAllText(outputFileName, output);
+
+      if(!_customHost.Errors.HasErrors) return;
+      var errors = "";
+      foreach(CompilerError error in _customHost.Errors)
+      {
+        errors += error.ToString() + System.Environment.NewLine;
+      }
+      File.WriteAllText(outputFileName, errors);
+    }
+  }
+#>
+<#+
+  public class CustomHost : ITextTemplatingEngineHost, ITextTemplatingSessionHost
+  {
+    #region ITextTemplatingEngineHost
+
+    private string _templateFileValue = "";
+    public string TemplateFile
+    {
+      get { return _templateFileValue; }
+      set { _templateFileValue = value; }
+    }
+    private string _fileExtensionValue = ".cs";
+    public string FileExtension
+    {
+      get { return _fileExtensionValue; }
+    }
+    private Encoding _fileEncodingValue = Encoding.UTF8;
+    public Encoding FileEncoding
+    {
+      get { return _fileEncodingValue; }
+    }
+
+    public CompilerErrorCollection Errors { get; private set; }
+
+    public IList<string> StandardAssemblyReferences
+    {
+      get
+      {
+        return new string[]
+          {
+          Assembly.GetExecutingAssembly().Location,
+          typeof(System.Uri).Assembly.Location,
+          typeof(System.Data.Metadata.Edm.EntityType).Assembly.Location
+          };
+      }
+    }
+
+    public IList<string> StandardImports
+    {
+      get
+      {
+        return new string[]
+          {
+          "System"
+          };
+      }
+    }
+
+    public bool LoadIncludeText(string requestFileName, out string content, out string location)
+    {
+      content = System.String.Empty;
+      location = System.String.Empty;
+
+      if (System.IO.File.Exists(requestFileName))
+      {
+        content = System.IO.File.ReadAllText(requestFileName);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    public object GetHostOption(string optionName)
+    {
+      //object returnObject;
+      //switch (optionName)
+      //{
+      //case "CacheAssemblies":
+      //returnObject = true;
+      //break;
+      //default:
+      //returnObject = null;
+      //break;
+      //}
+      //return returnObject;
+      if (optionName == "CacheAssemblies")
+      {
+        return 1;
+      }
+      return null;
+    }
+
+    public string ResolveAssemblyReference(string assemblyReference)
+    {
+      //if (System.IO.File.Exists(assemblyReference))
+      //{
+      //return assemblyReference;
+      //}
+      //string candidate = Path.Combine(Path.GetDirectoryName(this.TemplateFile), assemblyReference);
+      //if (System.IO.File.Exists(candidate))
+      //{
+      //return candidate;
+      //}
+      //
+      //return "";
+
+      //if(string.IsNullOrEmpty(assemblyReference)) return string.Empty;
+      if(string.IsNullOrEmpty(assemblyReference)) assemblyReference = "System.dll";
+
+      if (File.Exists(assemblyReference))
+      {
+        return assemblyReference;
+      }
+
+      try
+      {
+        // TODO: This is failing to resolve partial assembly names (e.g. "System.Xml")
+        var assembly = Assembly.Load(assemblyReference);
+
+        if (assembly != null)
+        {
+          return assembly.Location;
+        }
+      }
+      catch (FileNotFoundException)
+      {
+      }
+      catch (FileLoadException)
+      {
+      }
+      catch (BadImageFormatException)
+      {
+      }
+
+      return string.Empty;
+    }
+
+    public Type ResolveDirectiveProcessor(string processorName)
+    {
+      //if (string.Compare(processorName, "ParameterDirectiveProcessor", StringComparison.OrdinalIgnoreCase) == 0)
+      //{
+      //    // return typeof(ParameterProcessor);
+      //}          
+      throw new Exception("Directive Processor not found");
+    }
+    public string ResolvePath(string path)
+    {
+      //if (fileName == null)
+      //{
+      //throw new ArgumentNullException("the file name cannot be null");
+      //}
+      //
+      //if (System.IO.File.Exists(fileName))
+      //{
+      //return fileName;
+      //}
+      //
+      //string candidate = Path.Combine(Path.GetDirectoryName(this.TemplateFile), fileName);
+      //if (System.IO.File.Exists(candidate))
+      //{
+      //return candidate;
+      //}
+      //
+      //return fileName;
+      if (!Path.IsPathRooted(path) && Path.IsPathRooted(TemplateFile))
+      {
+        return Path.Combine(Path.GetDirectoryName(TemplateFile), path);
+      }
+
+      return path;
+    }
+    public string ResolveParameterValue(string directiveId, string processorName, string parameterName)
+    {
+      //if (directiveId == null)
+      //{
+      //throw new ArgumentNullException("the directiveId cannot be null");
+      //}
+      //if (processorName == null)
+      //{
+      //throw new ArgumentNullException("the processorName cannot be null");
+      //}
+      //if (parameterName == null)
+      //{
+      //throw new ArgumentNullException("the parameterName cannot be null");
+      //}
+      //return string.Empty;
+      return string.Empty;
+    }
+    public void SetFileExtension(string extension)
+    {
+
+      _fileExtensionValue = extension;
+    }
+
+    public void SetOutputEncoding(System.Text.Encoding encoding, bool fromOutputDirective)
+    {
+      _fileEncodingValue = encoding;
+    }
+    public void LogErrors(CompilerErrorCollection errors)
+    {
+      Errors = errors;
+    }
+
+    public AppDomain ProvideTemplatingAppDomain(string content)
+    {
+      //return AppDomain.CreateDomain("Generation App Domain", null, AppDomain.CurrentDomain.SetupInformation);
+      return AppDomain.CurrentDomain;
+    }
+    #endregion
+
+    #region ITextTemplatingSessionHost Members
+
+    public ITextTemplatingSession CreateSession()
+    {
+      return this.Session;
+    }
+
+    public ITextTemplatingSession Session
+    {
+      get;
+      set;
+    }
+
+    #endregion
+  }
+#>
+<#+
+  public class GeneratorSettings
+  {
+    public CodeGenerationTools Tools;
+    public EfTextTemplateHost EfHost;
+
+
+    public string VisualStudioVersion;
+
+    public string MainNamespace;
+    public string BusinessLogicProject;
+    public string DataAccessProject;
+    public string ModelsProject;
+    
+    public string BusinessLogicObjectSuffix;
+    public string DataTransferObjectSuffix;
+
+    public bool Complete;
+
+    public string BusinessLogicNamespace { get { return MainNamespace + "." + BusinessLogicProject; } }
+    public string DataAccessNamespace { get { return MainNamespace + "." + DataAccessProject; } }
+    public string ModelsNamespace { get { return MainNamespace + "." + ModelsProject; } }
+    
+    public string BusinessLogicObjectsNamespace { get { return BusinessLogicNamespace + "." + BusinessLogicObjectSuffix; } }
+    public string DataTransferObjectsNamespace { get { return BusinessLogicNamespace + "." + DataTransferObjectSuffix; } }
+
+    public Solution Solution;
+    public string SolutionPath { get { return Path.GetDirectoryName(Solution.FileName); } }
+    
+  }
+#>
+<#+
+  public class FileEntity
+  {
+    public string T4File;
+    public string CodeFile;
+    public bool HasGenerated;
+    public string ProjectName;
+    public bool InNonCompleteGeneration;
+
+    public string T4FilePath { get { return T4File + ".tt"; } }
+    public string T4GeneratedFilePath { get { return T4File + ".generated.tt"; } }
+
+    public string CodeFilePath { get { return CodeFile + ".cs"; } }
+    public string CodeGeneratedFilePath { get { return CodeFile + ".generated.cs"; } }
+  }
+#>
+<#+
+  public class GeneratorFiles : IEnumerable<FileEntity>
+  {
+    private GeneratorSettings _settings;
+    private List<FileEntity> _fileEntities;
+
+    public GeneratorFiles(GeneratorSettings settings)
+    {
+      _settings = settings;
+
+      CreateFileEntities();
+    }
+    private void CreateFileEntities()
+    {
+      var t4Path = Path.Combine(_settings.SolutionPath, _settings.ModelsNamespace, @"CodeTemplates\ReverseEngineerCodeFirst");      
+      var bllT4Path = Path.Combine(t4Path, "bll");
+      var dalT4Path = Path.Combine(t4Path, "dal");
+      var bllPath = Path.Combine(_settings.SolutionPath, _settings.BusinessLogicNamespace);
+      var dalPath = Path.Combine(_settings.SolutionPath, _settings.DataAccessNamespace);
+      var bllProjectName = _settings.BusinessLogicNamespace;
+      var dalProjectName = _settings.DataAccessNamespace;
+      var bloSuffix = _settings.BusinessLogicObjectSuffix;
+      var dtoSuffix = _settings.DataTransferObjectSuffix;      
+
+      _fileEntities = new List<FileEntity>();
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(bllT4Path, "BaseBLO"), CodeFile = Path.Combine(bllPath, bloSuffix, "Base", "Base" + bloSuffix),
+          HasGenerated = false, ProjectName = bllProjectName, InNonCompleteGeneration = false });
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(bllT4Path, "BaseDTO"), CodeFile = Path.Combine(bllPath, dtoSuffix, "Base", "Base" + dtoSuffix),
+          HasGenerated = false, ProjectName = bllProjectName, InNonCompleteGeneration = false });
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(bllT4Path, "InstanceFactory"), CodeFile = Path.Combine(bllPath, "StructureMap", "InstanceFactory"),
+          HasGenerated = false, ProjectName = bllProjectName, InNonCompleteGeneration = false });
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(bllT4Path, "StractureMapInitializer"), CodeFile = Path.Combine(bllPath, "StructureMap", "StractureMapInitializer"),
+          HasGenerated = false, ProjectName = bllProjectName, InNonCompleteGeneration = false });
+      
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(dalT4Path, "Context"), CodeFile = Path.Combine(dalPath, "Contexts", _settings.EfHost.EntityContainer.Name),
+          HasGenerated = true, ProjectName = dalProjectName, InNonCompleteGeneration = false });
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(dalT4Path, "DbServiceBase"), CodeFile = Path.Combine(dalPath, @"Services\Implementations\EF\Base", "DbServiceBase"),
+          HasGenerated = false, ProjectName = dalProjectName, InNonCompleteGeneration = false });
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(dalT4Path, "IDbService"), CodeFile = Path.Combine(dalPath, @"Services\Interfaces\Base", "IDbService"),
+          HasGenerated = false, ProjectName = dalProjectName, InNonCompleteGeneration = false });
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(dalT4Path, "IRepositoryService"), CodeFile = Path.Combine(dalPath, @"Services\Interfaces\Base", "IRepositoryService"),
+          HasGenerated = false, ProjectName = dalProjectName, InNonCompleteGeneration = false });
+      _fileEntities.Add(new FileEntity {
+          T4File = Path.Combine(dalT4Path, "IUnitOfWork"), CodeFile = Path.Combine(dalPath, @"Services\Interfaces\Base", "IUnitOfWork"),
+          HasGenerated = false, ProjectName = dalProjectName, InNonCompleteGeneration = false });
+    }
+
+    public IEnumerator<FileEntity> GetEnumerator()
+    {
+      return _fileEntities.GetEnumerator();
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+  }
+#>

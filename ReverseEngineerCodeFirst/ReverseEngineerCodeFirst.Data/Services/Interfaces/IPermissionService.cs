@@ -3,7 +3,7 @@ using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Data.Services.Interfaces
 {
-  public interface IUserParamService : IRepositoryService<UserParam>
+  public interface IPermissionService : IRepositoryService<Permission>
   {
   }
 }

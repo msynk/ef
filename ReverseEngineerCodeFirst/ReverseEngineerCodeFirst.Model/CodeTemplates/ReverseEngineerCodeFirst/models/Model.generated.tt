@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace <#= code.EscapeNamespace(efHost.Namespace) #>
+namespace <#= modelsNS #>
 {
   public partial class <#= efHost.EntityType.Name #>
   {

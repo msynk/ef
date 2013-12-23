@@ -15,11 +15,14 @@ namespace ReverseEngineerCodeFirst.Business.StructureMap
     public static void InitializeTypes()
     {
       ObjectFactory.Initialize(x =>
-                                 {
-                                   x.For<IUnitOfWork>().HybridHttpOrThreadLocalScoped().Use(() => new TestContext());
-                                   
-                                   //x.For<IUserService>().Use<UserService>();
-                                 });
+      {
+        x.For<IUnitOfWork>().HybridHttpOrThreadLocalScoped().Use(() => new TestContext());
+
+        x.For<IPermissionService>().Use<PermissionService>();
+        x.For<IUserDataService>().Use<UserDataService>();
+        x.For<IUserParamService>().Use<UserParamService>();
+        x.For<IUserService>().Use<UserService>();
+      });
     }
     //public static void Init(ControllerBuilder builder = null)
     //{

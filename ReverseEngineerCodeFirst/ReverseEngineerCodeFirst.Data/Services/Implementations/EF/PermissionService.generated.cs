@@ -7,18 +7,18 @@ using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Data.Services.Implementations.EF
 {
-	public partial class UserParamService : DbServiceBase<UserParam>, IUserParamService
+	public partial class PermissionService : DbServiceBase<Permission>, IPermissionService
   {
-    public UserParamService(IUnitOfWork uow) : base(uow)
+    public PermissionService(IUnitOfWork uow) : base(uow)
     {
     }
 
-    public UserParam Get(long id)
+    public Permission Get(long id)
     {
       return Repository.AsNoTracking().Single(p => p.Id == id);
     }
 
-    public UserParam GetForEdit(long id)
+    public Permission GetForEdit(long id)
     {
       return Repository.Single(p => p.Id == id);
     }

@@ -1,5 +1,5 @@
 using ReverseEngineerCodeFirst.Data.Services.Interfaces.Base;
-using ReverseEngineerCodeFirst.Model.Models;
+using ReverseEngineerCodeFirst.Model;
 
 namespace ReverseEngineerCodeFirst.Data.Services.Interfaces
 {

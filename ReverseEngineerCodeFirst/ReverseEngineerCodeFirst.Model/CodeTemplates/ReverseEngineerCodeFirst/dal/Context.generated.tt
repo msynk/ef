@@ -6,14 +6,10 @@
 <#@ parameter name="dalNS" type="System.String" #>
 <#@ parameter name="modelsNS" type="System.String" #>
 <#@ parameter name="efHost" type="Microsoft.DbContextPackage.Utilities.EfTextTemplateHost" #>
-<#
-    //var efHost = (EfTextTemplateHost)Host;
-    //var code = new CodeGenerationTools(this);
-#>
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using <#= dalNS #>.Mappings;
-using <#= modelsNS #>.Models;
+using <#= modelsNS #>;
 
 namespace <#= dalNS #>.Contexts
 {

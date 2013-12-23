@@ -26,7 +26,7 @@ using System.ComponentModel.DataAnnotations;
 	}
 #>
 using System.Data.Entity.ModelConfiguration;
-using <#= modelsNS #>.Models;
+using <#= modelsNS #>;
 
 namespace <#= dalNS #>.Mappings
 {
