@@ -30,27 +30,27 @@ using <#= modelsNS #>.Models;
 
 namespace <#= dalNS #>.Mappings
 {
-    public class <#= efHost.EntityType.Name #>Map : EntityTypeConfiguration<<#= efHost.EntityType.Name #>>
+  public class <#= efHost.EntityType.Name #>Map : EntityTypeConfiguration<<#= efHost.EntityType.Name #>>
+  {
+    public <#= efHost.EntityType.Name #>Map()
     {
-        public <#= efHost.EntityType.Name #>Map()
-        {
-            // Primary Key
+      // Primary Key
 <#
     if (efHost.EntityType.KeyMembers.Count() == 1)
     {
 #>
-            this.HasKey(t => t.<#= efHost.EntityType.KeyMembers.Single().Name #>);
+      HasKey(t => t.<#= efHost.EntityType.KeyMembers.Single().Name #>);
 <#
     }
     else
     {
 #>
-            this.HasKey(t => new { <#= string.Join(", ", efHost.EntityType.KeyMembers.Select(m => "t." + m.Name)) #> });
+      HasKey(t => new { <#= string.Join(", ", efHost.EntityType.KeyMembers.Select(m => "t." + m.Name)) #> });
 <#
     }
 #>
 
-            // Properties
+      // Properties
 <#
     foreach (var prop in efHost.EntityType.Properties)
     {
@@ -116,8 +116,8 @@ namespace <#= dalNS #>.Mappings
         if(configLines.Any())
         {
 #>
-            this.Property(t => t.<#= prop.Name #>)
-                <#= string.Join("\r\n                ", configLines) #>;
+      Property(t => t.<#= prop.Name #>)
+        <#= string.Join("\r\n                ", configLines) #>;
 
 <#
         }
@@ -128,25 +128,25 @@ namespace <#= dalNS #>.Mappings
         ?? tableSet.Name;
     var schemaName = (string)tableSet.MetadataProperties["Schema"].Value;
 #>
-            // Table & Column Mappings
+      // Table & Column Mappings
 <#
     if (schemaName == "dbo" || string.IsNullOrWhiteSpace(schemaName))
     {
 #>
-            this.ToTable("<#= tableName #>");
+      ToTable("<#= tableName #>");
 <#
     }
     else
     {
 #>
-            this.ToTable("<#= tableName #>", "<#= schemaName #>");
+      ToTable("<#= tableName #>", "<#= schemaName #>");
 <#
     }
 
     foreach (var property in efHost.EntityType.Properties)
     {
 #>
-            this.Property(t => t.<#= property.Name #>).HasColumnName("<#= efHost.PropertyToColumnMappings[property].Name #>");
+      Property(t => t.<#= property.Name #>).HasColumnName("<#= efHost.PropertyToColumnMappings[property].Name #>");
 <#
     }
         
@@ -167,7 +167,7 @@ namespace <#= dalNS #>.Mappings
     {
 #>
 
-            // Relationships
+      // Relationships
 <#
         foreach (var navProperty in manyManyRelationships)
         {
@@ -187,28 +187,27 @@ namespace <#= dalNS #>.Mappings
             var rightKeyMappings = mapping.Item2[otherNavProperty.FromEndMember];
             var rightColumns = string.Join(", ", rightType.KeyMembers.Select(m => "\"" + rightKeyMappings[m] + "\""));
 #>
-            this.HasMany(t => t.<#= code.Escape(navProperty) #>)
-                .WithMany(t => t.<#= code.Escape(otherNavProperty) #>)
-                .Map(m =>
-                    {
+      HasMany(t => t.<#= code.Escape(navProperty) #>)
+        .WithMany(t => t.<#= code.Escape(otherNavProperty) #>)
+        .Map(m =>
+        {
 <#
             if (mappingSchemaName == "dbo" || string.IsNullOrWhiteSpace(mappingSchemaName))
             {
 #>
-                        m.ToTable("<#= mappingTableName #>");
+          m.ToTable("<#= mappingTableName #>");
 <#
             }
             else
             {
 #>
-                        m.ToTable("<#= mappingTableName #>", "<#= mappingSchemaName #>");
+          m.ToTable("<#= mappingTableName #>", "<#= mappingSchemaName #>");
 <#
             }
 #>
-                        m.MapLeftKey(<#= leftColumns #>);
-                        m.MapRightKey(<#= rightColumns #>);
-                    });
-
+          m.MapLeftKey(<#= leftColumns #>);
+          m.MapRightKey(<#= rightColumns #>);
+        });
 <#
         }
             
@@ -220,31 +219,33 @@ namespace <#= dalNS #>.Mappings
             if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One)
             {
 #>
-            this.HasRequired(t => t.<#= code.Escape(navProperty) #>)
+
+      HasRequired(t => t.<#= code.Escape(navProperty) #>)
 <#
             }
             else
             {
 #>
-            this.HasOptional(t => t.<#= code.Escape(navProperty) #>)
+
+      HasOptional(t => t.<#= code.Escape(navProperty) #>)
 <#
             }
                 
             if(navProperty.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
             {
 #>
-                .WithMany(t => t.<#= code.Escape(otherNavProperty) #>)
+        .WithMany(t => t.<#= code.Escape(otherNavProperty) #>)
 <#
                 if(association.ReferentialConstraints.Single().ToProperties.Count == 1)
                 {
 #>
-                .HasForeignKey(d => d.<#= association.ReferentialConstraints.Single().ToProperties.Single().Name #>);
+        .HasForeignKey(d => d.<#= association.ReferentialConstraints.Single().ToProperties.Single().Name #>);
 <#
                 }
                 else
                 {
 #>
-                .HasForeignKey(d => new { <#= string.Join(", ", association.ReferentialConstraints.Single().ToProperties.Select(p => "d." + p.Name)) #> });
+        .HasForeignKey(d => new { <#= string.Join(", ", association.ReferentialConstraints.Single().ToProperties.Select(p => "d." + p.Name)) #> });
 <#
                 }
             }
@@ -254,15 +255,12 @@ namespace <#= dalNS #>.Mappings
                 //       as EDMGen will never create an optional:optional relationship
                 // 		 because everything is one:many except PK-PK relationships which must be required
 #>
-                .WithOptional(t => t.<#= code.Escape(otherNavProperty) #>);
+        .WithOptional(t => t.<#= code.Escape(otherNavProperty) #>);
 <#	
                 }
             }
-#>
-
-<#
         }
 #>
-        }
     }
+  }
 }

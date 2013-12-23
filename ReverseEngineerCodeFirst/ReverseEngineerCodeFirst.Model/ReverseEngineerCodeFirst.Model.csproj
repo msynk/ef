@@ -44,9 +44,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Permission.cs" />
+    <Compile Include="Models\Permission.generated.cs">
+      <DependentUpon>Permission.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\User.generated.cs">
+      <DependentUpon>User.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\UserData.cs" />
+    <Compile Include="Models\UserData.generated.cs">
+      <DependentUpon>UserData.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\UserParam.cs" />
+    <Compile Include="Models\UserParam.generated.cs">
+      <DependentUpon>UserParam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,12 +85,11 @@
     <None Include="CodeTemplates\bkp\dal\IUnitOfWork.tt" />
     <None Include="CodeTemplates\bkp\dal\Mapping.tt" />
     <None Include="CodeTemplates\bkp\E.tt" />
-    <None Include="CodeTemplates\bkp\EF.Utility.CS.ttinclude" />
     <None Include="CodeTemplates\bkp\Entity.tt" />
     <None Include="CodeTemplates\bkp\M.tt" />
     <None Include="CodeTemplates\bkp\Mapping.tt" />
+    <None Include="CodeTemplates\bkp\models\Model.generated.tt" />
     <None Include="CodeTemplates\bkp\models\Model.tt" />
-    <None Include="CodeTemplates\bkp\ProcessTemplate.ttinclude" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\BaseBLO.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\BaseDTO.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\bll\EntityBLO.generated.tt" />
@@ -99,11 +110,10 @@
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\IRepositoryService.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\IUnitOfWork.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\dal\Mapping.tt" />
-    <None Include="CodeTemplates\ReverseEngineerCodeFirst\EF.Utility.CS.ttinclude" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\models\Model.generated.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\models\Model.tt" />
-    <None Include="CodeTemplates\ReverseEngineerCodeFirst\ProcessTemplate.ttinclude" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

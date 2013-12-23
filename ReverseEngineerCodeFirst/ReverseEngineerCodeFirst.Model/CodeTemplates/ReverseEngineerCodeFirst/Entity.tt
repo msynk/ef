@@ -26,7 +26,9 @@
       BusinessLogicObjectSuffix = "Blo",
 
       Include = "",
-      Exclude = ""
+      Exclude = "",
+
+      Complete = true
     };
 
   var generator = new CodeGenerator(efHost, code, settings);
@@ -183,37 +185,52 @@
       var modelsPath = Path.Combine(modelsProjectPath, "Models");
       if (!Directory.Exists(modelsPath)) Directory.CreateDirectory(modelsPath);
       _paths.ModelPath = Path.Combine(modelsPath, _entityName + ".cs");
+      _paths.ModelGeneratedPath = Path.Combine(modelsPath, _entityName + ".generated.cs");
     }
 
     private void GenerateFiles()
     {
-      GenerateFile(Path.Combine(_paths.ttBllPath, "BaseBLO.tt"), _paths.BaseBloPath);
-      GenerateFile(Path.Combine(_paths.ttBllPath, "EntityBLO.tt"), _paths.EntityBloPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttBllPath, "BaseBLO.tt"), _paths.BaseBloPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttBllPath, "EntityBLO.tt"), _paths.EntityBloPath);
       GenerateFile(Path.Combine(_paths.ttBllPath, "EntityBLO.generated.tt"), _paths.EntityBloGeneratedPath);
-      GenerateFile(Path.Combine(_paths.ttBllPath, "BaseDTO.tt"), _paths.BaseDtoPath);
-      GenerateFile(Path.Combine(_paths.ttBllPath, "EntityDTO.tt"), _paths.EntityDtoPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttBllPath, "BaseDTO.tt"), _paths.BaseDtoPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttBllPath, "EntityDTO.tt"), _paths.EntityDtoPath);
       GenerateFile(Path.Combine(_paths.ttBllPath, "EntityDTO.generated.tt"), _paths.EntityDtoGeneratedPath);
       GenerateFile(Path.Combine(_paths.ttBllPath, "EntityDTOMapper.tt"), _paths.EntityDtoMapperPath);
-      GenerateFile(Path.Combine(_paths.ttBllPath, "InstanceFactory.tt"), _paths.InstanceFactoryPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttBllPath, "InstanceFactory.tt"), _paths.InstanceFactoryPath);
       GenerateFile(Path.Combine(_paths.ttBllPath, "StractureMapInitializer.tt"), _paths.StractureMapInitializerPath);
 
-      GenerateFile(Path.Combine(_paths.ttDalPath, "Context.tt"), _paths.ContextPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttDalPath, "Context.tt"), _paths.ContextPath);
       GenerateFile(Path.Combine(_paths.ttDalPath, "Context.generated.tt"), _paths.ContextGeneratedPath);
-      GenerateFile(Path.Combine(_paths.ttDalPath, "DbServiceBase.tt"), _paths.DbServiceBasePath);
-      GenerateFile(Path.Combine(_paths.ttDalPath, "EntityService.tt"), _paths.EntityServicePath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttDalPath, "DbServiceBase.tt"), _paths.DbServiceBasePath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttDalPath, "EntityService.tt"), _paths.EntityServicePath);
       GenerateFile(Path.Combine(_paths.ttDalPath, "EntityService.generated.tt"), _paths.EntityServiveGeneratedPath);
-      GenerateFile(Path.Combine(_paths.ttDalPath, "IEntityService.tt"), _paths.IEntityServicePath);
-      GenerateFile(Path.Combine(_paths.ttDalPath, "IDbService.tt"), _paths.IDbServicePath);
-      GenerateFile(Path.Combine(_paths.ttDalPath, "IRepositoryService.tt"), _paths.IRepositoryServicePath);
-      GenerateFile(Path.Combine(_paths.ttDalPath, "IUnitOfWork.tt"), _paths.IUnitOfWorkPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttDalPath, "IEntityService.tt"), _paths.IEntityServicePath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttDalPath, "IDbService.tt"), _paths.IDbServicePath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttDalPath, "IRepositoryService.tt"), _paths.IRepositoryServicePath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttDalPath, "IUnitOfWork.tt"), _paths.IUnitOfWorkPath);
       GenerateFile(Path.Combine(_paths.ttDalPath, "Mapping.tt"), _paths.MappingPath);
 
-      GenerateFile(Path.Combine(_paths.ttModelsPath, "Model.tt"), _paths.ModelPath);
+      if(_settings.Complete)
+        GenerateFile(Path.Combine(_paths.ttModelsPath, "Model.tt"), _paths.ModelPath);
+      GenerateFile(Path.Combine(_paths.ttModelsPath, "Model.generated.tt"), _paths.ModelGeneratedPath);
     }
     private void GenerateFile(string templateFileName, string outputFileName)
     {
       var host = _customHost;
-      var template = File.ReadAllText(_customHost.ResolvePath(templateFileName));
+      var template = File.ReadAllText(host.ResolvePath(templateFileName));
       var engine = new Engine();
       var output = engine.ProcessTemplate(template, host);
       File.WriteAllText(outputFileName, output);
@@ -253,6 +270,7 @@
 
       var modelsProject = _solution.Projects.Cast<Project>().Single(proj => proj.Name == _modelsNs);
       var modelItem = modelsProject.ProjectItems.AddFromFile(_paths.ModelPath);
+      modelItem.ProjectItems.AddFromFile(_paths.ModelGeneratedPath);
     }
   }
 #>
@@ -503,6 +521,7 @@
     public string MappingPath;
     /////////////////////////////////////////////////////////////////
     public string ModelPath;
+    public string ModelGeneratedPath;
   }
 #>
 <#+
@@ -517,5 +536,7 @@
     public string BusinessLogicObjectSuffix;
     public string Include;
     public string Exclude;
+
+    public bool Complete;
   }
 #>
