@@ -5,6 +5,7 @@
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating.VSHost" #><#
   var efHost = (EfTextTemplateHost)Host;
@@ -22,23 +23,14 @@
       DataAccessProject = "Data",
       ModelsProject = "Model",
       DataTransferObjectSuffix = "Dto",
-      BusinessLogicObjectSuffix = "Blo"
+      BusinessLogicObjectSuffix = "Blo",
+
+      Include = "",
+      Exclude = ""
     };
 
   var generator = new CodeGenerator(efHost, code, settings);
   generator.Generate();
-#>
-<#+
-  public class GeneratorSettings
-  {
-    public string VisualStudioVersion;
-    public string MainNamespace;
-    public string BusinessLogicProject;
-    public string DataAccessProject;
-    public string ModelsProject;
-    public string DataTransferObjectSuffix;
-    public string BusinessLogicObjectSuffix;
-  }
 #>
 <#+
   public class CodeGenerator
@@ -47,11 +39,6 @@
     private CodeGenerationTools _codeGenerationTools;
     private GeneratorSettings _settings;
 
-    private string _visualStudioVersion;
-    private string _mainNs;
-    private string _bll;
-    private string _dal;
-    private string _models;
     private string _dto;
     private string _blo;
 
@@ -73,23 +60,44 @@
       _efHost = efHost;
       _codeGenerationTools = tools;
       _settings = settings;
-      
+
+      _entityName = _efHost.EntityType.Name;
+    }
+
+    public void Generate()
+    {
+      if(!CheckIncludeExclude()) return;
+
       Initialize();
+      GeneratePaths();
+      GenerateFiles();
+      AddFilesToProjects();
+    }
+
+    private bool CheckIncludeExclude()
+    {
+      var result = true;
+      if(!string.IsNullOrEmpty(_settings.Include))
+      {
+        result = _settings.Include.Split(',').Contains(_entityName);
+      }
+      if(!string.IsNullOrEmpty(_settings.Exclude))
+      {
+        result = !_settings.Exclude.Split(',').Contains(_entityName);
+      }
+      return result;
     }
 
     private void Initialize()
     {
-      _visualStudioVersion = _settings.VisualStudioVersion;
-      _mainNs = _settings.MainNamespace;
-      _bll = _settings.BusinessLogicProject;
-      _dal = _settings.DataAccessProject;
-      _models = _settings.ModelsProject;
+      _solution = ((DTE)System.Runtime.InteropServices.Marshal.GetActiveObject(_settings.VisualStudioVersion)).Solution;
+
       _dto = _settings.DataTransferObjectSuffix;
       _blo = _settings.BusinessLogicObjectSuffix;
 
-      _bllNs = _mainNs + "." + _bll;
-      _dalNs = _mainNs + "." + _dal;
-      _modelsNs = _mainNs + "." + _models;
+      _bllNs = _settings.MainNamespace + "." + _settings.BusinessLogicProject;
+      _dalNs = _settings.MainNamespace + "." + _settings.DataAccessProject;
+      _modelsNs = _settings.MainNamespace + "." + _settings.ModelsProject;
       _dtoNs = _bllNs + "." + _dto;
       _bloNs = _bllNs + "." + _blo;
 
@@ -114,18 +122,9 @@
       sessionHost.Session = session;
     }
 
-    public void Generate()
-    {
-      _entityName = _efHost.EntityType.Name;
-      GeneratePaths();
-      GenerateFiles();
-      AddFilesToProjects();
-    }
-
     private void GeneratePaths()
     {
       _paths = new CodePaths();
-      _solution = ((DTE)System.Runtime.InteropServices.Marshal.GetActiveObject(_visualStudioVersion)).Solution;
       var solutionPath = Path.GetDirectoryName(_solution.FileName);
 
       var ttPath = Path.Combine(solutionPath, _modelsNs, @"CodeTemplates\ReverseEngineerCodeFirst");
@@ -504,5 +503,19 @@
     public string MappingPath;
     /////////////////////////////////////////////////////////////////
     public string ModelPath;
+  }
+#>
+<#+
+  public class GeneratorSettings
+  {
+    public string VisualStudioVersion;
+    public string MainNamespace;
+    public string BusinessLogicProject;
+    public string DataAccessProject;
+    public string ModelsProject;
+    public string DataTransferObjectSuffix;
+    public string BusinessLogicObjectSuffix;
+    public string Include;
+    public string Exclude;
   }
 #>

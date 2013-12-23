@@ -42,15 +42,42 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blo\Base\BaseBlo.cs" />
+    <Compile Include="Blo\PermissionBlo.cs" />
+    <Compile Include="Blo\PermissionBlo.generated.cs">
+      <DependentUpon>PermissionBlo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Blo\UserBlo.cs" />
     <Compile Include="Blo\UserBlo.generated.cs">
       <DependentUpon>UserBlo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Blo\UserDataBlo.cs" />
+    <Compile Include="Blo\UserDataBlo.generated.cs">
+      <DependentUpon>UserDataBlo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Blo\UserParamBlo.cs" />
+    <Compile Include="Blo\UserParamBlo.generated.cs">
+      <DependentUpon>UserParamBlo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dto\Base\BaseDto.cs" />
+    <Compile Include="Dto\Mapping\PermissionDtoMapper.cs" />
+    <Compile Include="Dto\Mapping\UserDataDtoMapper.cs" />
     <Compile Include="Dto\Mapping\UserDtoMapper.cs" />
+    <Compile Include="Dto\Mapping\UserParamDtoMapper.cs" />
+    <Compile Include="Dto\PermissionDto.cs" />
+    <Compile Include="Dto\PermissionDto.generated.cs">
+      <DependentUpon>PermissionDto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dto\UserDataDto.cs" />
+    <Compile Include="Dto\UserDataDto.generated.cs">
+      <DependentUpon>UserDataDto.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\UserDto.generated.cs">
       <DependentUpon>UserDto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dto\UserParamDto.cs" />
+    <Compile Include="Dto\UserParamDto.generated.cs">
+      <DependentUpon>UserParamDto.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StructureMap\InstanceFactory.cs" />

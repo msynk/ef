@@ -4,31 +4,31 @@ using ReverseEngineerCodeFirst.Model.Models;
 
 namespace ReverseEngineerCodeFirst.Data.Mappings
 {
-    public class UserMap : EntityTypeConfiguration<User>
+  public class UserMap : EntityTypeConfiguration<User>
+  {
+    public UserMap()
     {
-        public UserMap()
-        {
-            // Primary Key
-            this.HasKey(t => t.Id);
+      // Primary Key
+      HasKey(t => t.Id);
 
-            // Properties
-            this.Property(t => t.Username)
-                .IsRequired()
+      // Properties
+      Property(t => t.Username)
+        .IsRequired()
                 .HasMaxLength(100);
 
-            this.Property(t => t.Password)
-                .IsRequired()
+      Property(t => t.Password)
+        .IsRequired()
                 .HasMaxLength(100);
 
-            this.Property(t => t.Name)
-                .HasMaxLength(100);
+      Property(t => t.Name)
+        .HasMaxLength(100);
 
-            // Table & Column Mappings
-            this.ToTable("User");
-            this.Property(t => t.Id).HasColumnName("Id");
-            this.Property(t => t.Username).HasColumnName("Username");
-            this.Property(t => t.Password).HasColumnName("Password");
-            this.Property(t => t.Name).HasColumnName("Name");
-        }
+      // Table & Column Mappings
+      ToTable("Users");
+      Property(t => t.Id).HasColumnName("Id");
+      Property(t => t.Username).HasColumnName("Username");
+      Property(t => t.Password).HasColumnName("Password");
+      Property(t => t.Name).HasColumnName("Name");
     }
+  }
 }
